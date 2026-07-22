@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplication1.Process;
 
 namespace WebApplication1.Controllers
 {
@@ -7,8 +8,10 @@ namespace WebApplication1.Controllers
     public class RateLimiterController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Start()
         {
+            FileWriterService fileWriterService = new FileWriterService();
+            fileWriterService.WriteFileAsync();
             return Ok("Rate Limiting is working!");
         }
     }
