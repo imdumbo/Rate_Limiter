@@ -2,24 +2,19 @@
 {
     public class FileWriterService
     {
-        public Task WriteFileAsync()
+        public async Task WriteFileAsync(string fileName, int num)
         {
-            string fileName = $"{Model.Constant.FILEPATH}RequestLog_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
-            // check file exists or not
-            if(File.Exists(fileName))
+            fileName = $"{Model.Constant.FILEPATH}{fileName}.txt";
+            // write into the file
+            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(fileName, append: true))
             {
-                // if exists delete it
-                File.Delete(fileName);
+                //for (int i = 0; i < num; i++)
+                //{
+                //   await writer.WriteLineAsync($"Request {i + 1}");
+                //}
+                await writer.WriteLineAsync($"Request {num}");
             }
-            // and if not create a new file
-            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(fileName))
-            {
-                for(int i = 0; i < 10; i++)
-                {
-                    writer.WriteLine($"Request {i + 1}");
-                }
-            }
-            return Task.CompletedTask;
+            return;
         }
     }
 }

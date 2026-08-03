@@ -2,6 +2,14 @@
 {
     public class RequestContext
     {
-        public Func<int, Task> RequestDelegate { get; set; }
+        public Func<string, int, Task>? WriteAsync { get; set; }
+
+        public async Task ExecuteAsync(string fileName, int num)
+        {
+            if (WriteAsync == null)
+                throw new InvalidOperationException("No write method assigned.");
+
+            await WriteAsync(fileName, num);
+        }
     }
 }
