@@ -35,6 +35,25 @@ namespace WebApplication1.Process
         }
 
         /// <summary>
+        /// Convenience increment method used by callers.
+        /// </summary>
+        public void Increment() => Mark(1);
+
+        /// <summary>
+        /// Reset all internal buckets (counts and timestamps) to zero.
+        /// After calling Reset, GetRpm() will return 0 until new marks arrive.
+        /// Thread-safe using Interlocked operations.
+        /// </summary>
+        public void Reset()
+        {
+            for (int i = 0; i < 60; i++)
+            {
+                Interlocked.Exchange(ref _counts[i], 0);
+                Interlocked.Exchange(ref _timestamps[i], 0);
+            }
+        }
+
+        /// <summary>
         /// Get the total marks in the last 60 seconds (RPM approximation).
         /// </summary>
         public long GetRpm()
