@@ -1,10 +1,12 @@
 using Microsoft.OpenApi;
+using WebApplication1.Process;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddSingleton<RpmTracker>();
 // Add Swagger/OpenAPI (Swashbuckle)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

@@ -1,4 +1,6 @@
-﻿using System.Threading.RateLimiting;
+﻿using System;
+using System.IO;
+using System.Threading.RateLimiting;
 using WebApplication1.Model;
 
 namespace WebApplication1.Process
@@ -8,69 +10,53 @@ namespace WebApplication1.Process
     /// </summary>
     public class BatchProcessor : IDisposable
     {
-        private string fileName = $"RequestLog_{DateTime.Now:yyyyMMddHHmmss}";
-        // Token bucket limiter (required). Caller must provide an instance to avoid accidental defaults.
-        public TokenBucketRateLimiter limiter { get; }
-
-        private readonly RateMeter _rateMeter = new RateMeter();
-        private readonly Timer? _logTimer;
+        private readonly RpmTracker _rpmTracker;
+        // Default rate limiter configured with conservative defaults. Make this configurable if needed.
+        private static readonly TokenBucketRateLimiter _limiter = new TokenBucketRateLimiter(
+            new TokenBucketRateLimiterOptions
+            {
+                TokenLimit = 100,
+                TokensPerPeriod = 100,
+                ReplenishmentPeriod = TimeSpan.FromMinutes(1),
+                AutoReplenishment = true,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            });
 
         public int MaxDegreeOfParallelism { get; set; } = 1;
-
-        public BatchProcessor(TokenBucketRateLimiter tokenBucketLimiter, bool enablePeriodicConsoleLogging = false)
+        private readonly string _fullPath;
+        public BatchProcessor()
         {
-            limiter = tokenBucketLimiter ?? throw new ArgumentNullException(nameof(tokenBucketLimiter));
-            if (enablePeriodicConsoleLogging)
-            {
-                _logTimer = new Timer(_ => LogRpm(), null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
-            }
+            _rpmTracker = new RpmTracker();
+            _fullPath = Path.Combine(Model.Constant.FILEPATH, $"RequestLog_{DateTime.Now:yyyyMMddHHmmss}.txt");
         }
 
-        private void LogRpm()
+        public async Task ExecuteAsync(IEnumerable<int> items, RequestContext request, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var rpm = _rateMeter.GetRpm();
-                Console.WriteLine($"RPM: {rpm}");
-                // reset counts after logging to start a fresh minute
-                _rateMeter.Reset();
-            }
-            catch
-            {
-                // swallow logging errors
-            }
-        }
-
-        public async Task ExecuteAsync(IEnumerable<int> items, RequestContext request, int batchSize, CancellationToken cancellationToken = default)
-        {
-            var batches = createBatches(items, batchSize);
             var options = new ParallelOptions
             {
                 MaxDegreeOfParallelism = MaxDegreeOfParallelism,
                 CancellationToken = cancellationToken
             };
-            var tasks = batches
-                        .SelectMany(batch => batch.Select(element =>
-                            Task.Run(async () =>
-                            {
-                                await limiter.AcquireAsync(1, cancellationToken).ConfigureAwait(false);
-                                await request.ExecuteAsync(fileName, element).ConfigureAwait(false);
-                                _rateMeter.Increment();
-                            }, cancellationToken)))
-                        .ToArray();
 
-            await Task.WhenAll(tasks);
+            // Parallel.ForEachAsync automatically handles concurrency limits safely.
+            // No manual batching or Task.Run needed!
+            await Parallel.ForEachAsync(items, options, async (element, ct) =>
+            {
+                // Wait for the rate limiter bucket
+                using var lease = await _limiter.AcquireAsync(1, ct);
+
+                if (lease.IsAcquired)
+                {
+                    await request.ExecuteAsync(_fullPath, element);
+                    _rpmTracker.TrackCall();
+                }
+            });
         }
 
-        private IEnumerable<IEnumerable<int>> createBatches(IEnumerable<int> items, int batchSize)
-        {
-            return items.Select((item, index) => new { item, index })
-                       .GroupBy(x => x.index / batchSize)
-                       .Select(group => group.Select(x => x.item));
-        }
         public void Dispose()
         {
-            try { _logTimer?.Dispose(); } catch { }
+            _rpmTracker.Dispose();
         }
     }
 }

@@ -2,19 +2,27 @@
 {
     public class FileWriterService
     {
-        public async Task WriteFileAsync(string fileName, int num)
+        // a static semaphore lock shared across all instances
+        private static readonly SemaphoreSlim _fileLock = new SemaphoreSlim(1, 1);
+
+        public async Task WriteFileAsync(string fullPath, int num)
         {
-            fileName = $"{Model.Constant.FILEPATH}{fileName}.txt";
-            // write into the file
-            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(fileName, append: true))
+            // Make threads wait in line asynchronously before accessing the file
+            await _fileLock.WaitAsync();
+            try
             {
-                //for (int i = 0; i < num; i++)
-                //{
-                //   await writer.WriteLineAsync($"Request {i + 1}");
-                //}
-                await writer.WriteLineAsync($"Request {num}");
+                // Write to the file safely
+                using (StreamWriter writer = new StreamWriter(fullPath, append: true))
+                {
+                    await Task.Delay(100);
+                    await writer.WriteLineAsync($"Request {num}");
+                }
             }
-            return;
+            finally
+            {
+                // CRITICAL: Always release the lock so the next thread can go
+                _fileLock.Release();
+            }
         }
     }
 }
