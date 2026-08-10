@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApplication1.Process
 {
-    public class FileWriterService
+    public class FileWriterService : WebApplication1.Process.Contract.IFileWriterService
     {
         // a static semaphore lock shared across all instances
         private static readonly SemaphoreSlim _fileLock = new SemaphoreSlim(1, 1);

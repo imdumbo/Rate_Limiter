@@ -9,9 +9,9 @@ namespace WebApplication1.Process
     /// <summary>
     /// Generic batch processor that invokes a configured processor for each batch of items.
     /// </summary>
-    public class BatchProcessor : IDisposable
+    public class BatchProcessor : IDisposable, WebApplication1.Process.Contract.IBatchProcessor
     {
-        private readonly RpmTracker _rpmTracker;
+        private readonly WebApplication1.Process.Contract.IRpmTracker _rpmTracker;
         private readonly ILogger<BatchProcessor>? _logger;
 
         // Default rate limiter configured: 100 tokens per second, queues excess requests
@@ -30,9 +30,9 @@ namespace WebApplication1.Process
         public int MaxDegreeOfParallelism { get; set; } = 1;
         private readonly string _fullPath;
 
-        public BatchProcessor(ILogger<BatchProcessor>? logger = null)
+        public BatchProcessor(WebApplication1.Process.Contract.IRpmTracker rpmTracker, ILogger<BatchProcessor>? logger = null)
         {
-            _rpmTracker = new RpmTracker();
+            _rpmTracker = rpmTracker;
             _logger = logger;
             _fullPath = Path.Combine(Model.Constant.FILEPATH, $"RequestLog_{DateTime.Now:yyyyMMddHHmmss}.txt");
         }
@@ -81,7 +81,8 @@ namespace WebApplication1.Process
 
         public void Dispose()
         {
-            _rpmTracker.Dispose();
+            // Do not dispose injected singleton IRpmTracker here; DI container will manage its lifetime.
+            // Keep empty to satisfy IDisposable contract.
         }
     }
 }

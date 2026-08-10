@@ -4,7 +4,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class RpmTracker : IDisposable
+    public class RpmTracker : WebApplication1.Process.Contract.IRpmTracker
     {
         private long _requestCount;
         private readonly CancellationTokenSource _cts = new();

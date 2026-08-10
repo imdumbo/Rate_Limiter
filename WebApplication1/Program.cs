@@ -1,5 +1,6 @@
 using Microsoft.OpenApi;
 using WebApplication1.Process;
+using WebApplication1.Process.Contract;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,10 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<RpmTracker>();
-builder.Services.AddScoped<BatchProcessor>();
+// Register process layer services by contract
+builder.Services.AddSingleton<IRpmTracker, RpmTracker>();
+builder.Services.AddScoped<IBatchProcessor, BatchProcessor>();
+builder.Services.AddScoped<IFileWriterService, FileWriterService>();
 
 // Add Swagger/OpenAPI (Swashbuckle)
 builder.Services.AddEndpointsApiExplorer();
