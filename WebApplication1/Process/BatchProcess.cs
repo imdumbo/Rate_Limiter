@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.RateLimiting;
-using Microsoft.Extensions.Logging;
+﻿using System.Threading.RateLimiting;
 using WebApplication1.Model;
 
 namespace WebApplication1.Process
@@ -14,18 +11,16 @@ namespace WebApplication1.Process
         private readonly WebApplication1.Process.Contract.IRpmTracker _rpmTracker;
         private readonly ILogger<BatchProcessor>? _logger;
 
-        // Default rate limiter configured: 100 tokens per second, queues excess requests
-        // Tune TokensPerPeriod & QueueLimit based on downstream throughput
         private static readonly TokenBucketRateLimiter _limiter = new TokenBucketRateLimiter(
-            new TokenBucketRateLimiterOptions
-            {
-                TokenLimit = 100,
-                TokensPerPeriod = 100,
-                ReplenishmentPeriod = TimeSpan.FromSeconds(1),  // ← FIXED: Was 1 MINUTE, now 1 SECOND
-                AutoReplenishment = true,
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                QueueLimit = 1000  // ← FIXED: Was 0 (reject), now allows queuing
-            });
+              new TokenBucketRateLimiterOptions
+              {
+                  TokenLimit = 100,
+                  TokensPerPeriod = 100,
+                  ReplenishmentPeriod = TimeSpan.FromSeconds(1),
+                  AutoReplenishment = true,
+                  QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                  QueueLimit = 1000
+              });
 
         public int MaxDegreeOfParallelism { get; set; } = 1;
         private readonly string _fullPath;
@@ -75,14 +70,12 @@ namespace WebApplication1.Process
                 }
             });
 
-            _logger?.LogInformation("Batch processing complete. Successful: {SuccessCount}, Rejected: {RejectedCount}", 
+            _logger?.LogInformation("Batch processing complete. Successful: {SuccessCount}, Rejected: {RejectedCount}",
                 successCount, rejectedCount);
         }
 
         public void Dispose()
         {
-            // Do not dispose injected singleton IRpmTracker here; DI container will manage its lifetime.
-            // Keep empty to satisfy IDisposable contract.
         }
     }
 }

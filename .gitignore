@@ -13,9 +13,6 @@
 # Visual Studio cache/options directory
 .vs/
 
-#outputFiles
-*.wwwRoot/
-
 # Build results
 [Bb]in/
 [Oo]bj/

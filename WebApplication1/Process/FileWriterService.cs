@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace WebApplication1.Process
+﻿namespace WebApplication1.Process
 {
     public class FileWriterService : WebApplication1.Process.Contract.IFileWriterService
     {

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Threading;
-    using System.Threading.Tasks;
 
     public class RpmTracker : WebApplication1.Process.Contract.IRpmTracker
     {
