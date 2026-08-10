@@ -66,6 +66,9 @@ artifacts/
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
+# Generated log files in wwwRoot
+wwwRoot/*.txt
+
 # StyleCop
 StyleCopReport.xml
 
