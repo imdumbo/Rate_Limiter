@@ -5,8 +5,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// Add Logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 builder.Services.AddControllers();
 builder.Services.AddSingleton<RpmTracker>();
+builder.Services.AddScoped<BatchProcessor>();
+
 // Add Swagger/OpenAPI (Swashbuckle)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
