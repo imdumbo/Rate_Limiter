@@ -52,7 +52,7 @@ HTTP GET Request
 
 ## ⚙️ Configuration
 
-**Rate Limiter Settings** in `WebApplication1/Process/BatchProcess.cs`:
+**Rate Limiter Settings** in `Rate_Limiter/Process/BatchProcess.cs`:
 
 ```csharp
 private static readonly TokenBucketRateLimiter _limiter = new TokenBucketRateLimiter(
@@ -114,7 +114,7 @@ dotnet restore
 dotnet build
 
 # Run
-dotnet run --project WebApplication1
+dotnet run --project Rate_Limiter
 ```
 
 ### First Request
@@ -150,7 +150,7 @@ Console.WriteLine(content);
 
 **Output File:**
 ```
-F:\Net Project\Rate Limiter\Rate_Limiter\WebApplication1\wwwRoot\RequestLog_*.txt
+F:\Net Project\Rate Limiter\Rate_Limiter\Rate_Limiter\wwwRoot\RequestLog_*.txt
 
 Request 1 written at 2026-01-15 10:30:45 IST with delay of 234 ms
 Request 2 written at 2026-01-15 10:30:46 IST with delay of 512 ms

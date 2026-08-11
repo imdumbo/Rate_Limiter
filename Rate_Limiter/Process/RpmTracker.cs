@@ -1,9 +1,9 @@
-﻿namespace WebApplication1.Process
+﻿namespace Rate_Limiter.Process
 {
     using System;
     using System.Threading;
 
-    public class RpmTracker : WebApplication1.Process.Contract.IRpmTracker
+    public class RpmTracker : Rate_Limiter.Process.Contract.IRpmTracker
     {
         private long _requestCount;
         private readonly CancellationTokenSource _cts = new();
@@ -32,7 +32,7 @@
             {
                 long currentRpm = Interlocked.Exchange(ref _requestCount, 0);
 
-                Console.WriteLine($"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC] Server RPM: {currentRpm}");
+                Console.WriteLine($"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC] Process RPM: {currentRpm}");
             }
         }
 

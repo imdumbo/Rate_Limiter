@@ -37,7 +37,7 @@ ScaffoldingReadMe.txt
 wwwRoot/*.txt
 
 # Ignore wwwRoot folders (prevent committing runtime logs)
-WebApplication1/wwwRoot/
+Rate_Limiter/wwwRoot/
 wwwRoot/
 
 # NuGet Packages

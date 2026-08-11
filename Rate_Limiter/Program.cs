@@ -1,6 +1,6 @@
 using Microsoft.OpenApi;
-using WebApplication1.Process;
-using WebApplication1.Process.Contract;
+using Rate_Limiter.Process;
+using Rate_Limiter.Process.Contract;
 
 var builder = WebApplication.CreateBuilder(args);
 

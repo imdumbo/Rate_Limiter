@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Model;
-using WebApplication1.Process.Contract;
+using Rate_Limiter.Model;
+using Rate_Limiter.Process.Contract;
 
-namespace WebApplication1.Controllers
+namespace Rate_Limiter.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

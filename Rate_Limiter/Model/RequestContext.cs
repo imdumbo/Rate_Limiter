@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Model
+﻿namespace Rate_Limiter.Model
 {
     public class RequestContext
     {

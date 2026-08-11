@@ -1,6 +1,6 @@
 ﻿using System.Threading.RateLimiting;
 
-namespace WebApplication1.Process
+namespace Rate_Limiter.Process
 {
     public static class RateLimiter
     {

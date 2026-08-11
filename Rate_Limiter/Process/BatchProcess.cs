@@ -1,14 +1,14 @@
 ﻿using System.Threading.RateLimiting;
-using WebApplication1.Model;
+using Rate_Limiter.Model;
 
-namespace WebApplication1.Process
+namespace Rate_Limiter.Process
 {
     /// <summary>
     /// Generic batch processor that invokes a configured processor for each batch of items.
     /// </summary>
-    public class BatchProcessor : IDisposable, WebApplication1.Process.Contract.IBatchProcessor
+    public class BatchProcessor : IDisposable, Rate_Limiter.Process.Contract.IBatchProcessor
     {
-        private readonly WebApplication1.Process.Contract.IRpmTracker _rpmTracker;
+        private readonly Rate_Limiter.Process.Contract.IRpmTracker _rpmTracker;
         private readonly ILogger<BatchProcessor>? _logger;
 
         private static readonly TokenBucketRateLimiter _limiter = new TokenBucketRateLimiter(
@@ -25,7 +25,7 @@ namespace WebApplication1.Process
         public int MaxDegreeOfParallelism { get; set; } = 1;
         private readonly string _fullPath;
 
-        public BatchProcessor(WebApplication1.Process.Contract.IRpmTracker rpmTracker, ILogger<BatchProcessor>? logger = null)
+        public BatchProcessor(Rate_Limiter.Process.Contract.IRpmTracker rpmTracker, ILogger<BatchProcessor>? logger = null)
         {
             _rpmTracker = rpmTracker;
             _logger = logger;

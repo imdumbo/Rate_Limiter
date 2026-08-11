@@ -1,6 +1,6 @@
-using WebApplication1.Model;
+using Rate_Limiter.Model;
 
-namespace WebApplication1.Process.Contract
+namespace Rate_Limiter.Process.Contract
 {
     public interface IBatchProcessor : IDisposable
     {

@@ -1,6 +1,6 @@
-﻿namespace WebApplication1.Process
+﻿namespace Rate_Limiter.Process
 {
-    public class FileWriterService : WebApplication1.Process.Contract.IFileWriterService
+    public class FileWriterService : Rate_Limiter.Process.Contract.IFileWriterService
     {
         // a static semaphore lock shared across all instances
         private static readonly SemaphoreSlim _fileLock = new SemaphoreSlim(1, 1);
