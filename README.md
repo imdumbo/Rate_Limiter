@@ -145,12 +145,12 @@ Console.WriteLine(content);
 ```
 [2026-01-15 10:30:45] Starting batch processing of 100000 requests
 [2026-01-15 10:30:45] Batch processing complete. Successful: 100000, Rejected: 0
-[2026-01-15 10:31:45] [Server UTC] Server RPM: 100
+[2026-01-15 10:31:45] [Server UTC] Process RPM: 100
 ```
 
 **Output File:**
 ```
-F:\Net Project\Rate Limiter\Rate_Limiter\Rate_Limiter\wwwRoot\RequestLog_*.txt
+wwwRoot/RequestLog_*.txt  (resolved at runtime via Rate_Limiter.Model.Constant.FILEPATH)
 
 Request 1 written at 2026-01-15 10:30:45 IST with delay of 234 ms
 Request 2 written at 2026-01-15 10:30:46 IST with delay of 512 ms
